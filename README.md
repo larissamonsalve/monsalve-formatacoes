@@ -12,25 +12,25 @@
 
 > **Landing Page e Sistema de Vendas para Serviço de Formatação Acadêmica (Normas ABNT).**
 
-Projeto desenvolvido como requisito para a disciplina de **Projeto Integrador** do **Instituto Federal do Amazonas (IFAM) - Campus Parintins** sob orientação do **Prof. Ronem Lavareda**[cite: 1].
+Projeto desenvolvido como requisito para a disciplina de **Projeto Integrador** do **Instituto Federal do Amazonas (IFAM) - Campus Parintins**.
 
 ---
 
 ## 📋 Visão Geral
 
-O **simpleFormatABNT** é uma aplicação web full stack voltada para a comercialização de serviços de consultoria e formatação de trabalhos acadêmicos[cite: 1]. O sistema abrange todo o funil de vendas: desde a apresentação do serviço, captação de leads, verificação de segurança (OTP), até o processamento financeiro e notificação de compra aprovada[cite: 1].
+O **simpleFormatABNT** é uma aplicação web full stack voltada para a comercialização de serviços de consultoria e formatação de trabalhos acadêmicos. O sistema abrange todo o funil de vendas: desde a apresentação do serviço, captação de leads, verificação de segurança (OTP), até o processamento financeiro e notificação de compra aprovada.
 
 ## ✨ Funcionalidades (Fluxo de Venda)
 
-O sistema segue rigorosamente o fluxo de 9 etapas[cite: 1]:
-1. **Landing Page:** Apresentação visual e persuasiva dos pacotes de formatação[cite: 1].
-2. **Captação de Lead:** Formulário para captura de Nome, E-mail e WhatsApp[cite: 1].
-3. **Verificação de E-mail (OTP):** Envio de código temporário de 6 dígitos para validar o e-mail do cliente[cite: 1].
-4. **Checkout Seguro:** Resumo da compra com as informações da formatação[cite: 1].
-5. **Integração Mercado Pago:** Pagamento em ambiente seguro (Pix e Cartão de Crédito)[cite: 1].
-6. **Webhooks:** O backend escuta as atualizações de pagamento via Mercado Pago[cite: 1].
-7. **Gestão de Pedido:** Atualização automática do status do pedido no banco de dados para "PAGO"[cite: 1].
-8. **E-mail de Confirmação:** Disparo automático de e-mail ao cliente com instruções para envio do arquivo `.docx`[cite: 1].
+O sistema segue rigorosamente o fluxo de 9 etapas:
+1. **Landing Page:** Apresentação visual e persuasiva dos pacotes de formatação.
+2. **Captação de Lead:** Formulário para captura de Nome, E-mail e WhatsApp.
+3. **Verificação de E-mail (OTP):** Envio de código temporário de 6 dígitos para validar o e-mail do cliente.
+4. **Checkout Seguro:** Resumo da compra com as informações da formatação.
+5. **Integração Mercado Pago:** Pagamento em ambiente seguro (Pix e Cartão de Crédito).
+6. **Webhooks:** O backend escuta as atualizações de pagamento via Mercado Pago.
+7. **Gestão de Pedido:** Atualização automática do status do pedido no banco de dados para "PAGO".
+8. **E-mail de Confirmação:** Disparo automático de e-mail ao cliente com instruções para envio do arquivo `.docx`.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -38,8 +38,8 @@ O sistema segue rigorosamente o fluxo de 9 etapas[cite: 1]:
 - **Back-end:** Next.js API Routes (Node.js).
 - **Linguagem:** TypeScript (Tipagem estática ponta a ponta).
 - **Integrações:** Mercado Pago (Checkout e Webhooks), Serviço SMTP (Envio de E-mails).
-- **Infraestrutura:** Docker e Docker Compose[cite: 1].
-- **Controle de Versão:** Git e GitHub Actions (CI/CD)[cite: 1].
+- **Infraestrutura:** Docker e Docker Compose.
+- **Controle de Versão:** Git e GitHub Actions (CI/CD).
 
 ## 🛠️ Como executar o projeto localmente
 
