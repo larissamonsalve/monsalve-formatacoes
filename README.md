@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 simpleFormatABNT
 
-## Getting Started
+<div align="center">
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white">
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
+  <img alt="Mercado Pago" src="https://img.shields.io/badge/Mercado_Pago-00B1EA?style=for-the-badge&logo=mercadopago&logoColor=white">
+</div>
 
-First, run the development server:
+<br>
 
+> **Landing Page e Sistema de Vendas para Serviço de Formatação Acadêmica (Normas ABNT).**
+
+Projeto desenvolvido como requisito para a disciplina de **Projeto Integrador** do **Instituto Federal do Amazonas (IFAM) - Campus Parintins** sob orientação do **Prof. Ronem Lavareda**[cite: 1].
+
+---
+
+## 📋 Visão Geral
+
+O **simpleFormatABNT** é uma aplicação web full stack voltada para a comercialização de serviços de consultoria e formatação de trabalhos acadêmicos[cite: 1]. O sistema abrange todo o funil de vendas: desde a apresentação do serviço, captação de leads, verificação de segurança (OTP), até o processamento financeiro e notificação de compra aprovada[cite: 1].
+
+## ✨ Funcionalidades (Fluxo de Venda)
+
+O sistema segue rigorosamente o fluxo de 9 etapas[cite: 1]:
+1. **Landing Page:** Apresentação visual e persuasiva dos pacotes de formatação[cite: 1].
+2. **Captação de Lead:** Formulário para captura de Nome, E-mail e WhatsApp[cite: 1].
+3. **Verificação de E-mail (OTP):** Envio de código temporário de 6 dígitos para validar o e-mail do cliente[cite: 1].
+4. **Checkout Seguro:** Resumo da compra com as informações da formatação[cite: 1].
+5. **Integração Mercado Pago:** Pagamento em ambiente seguro (Pix e Cartão de Crédito)[cite: 1].
+6. **Webhooks:** O backend escuta as atualizações de pagamento via Mercado Pago[cite: 1].
+7. **Gestão de Pedido:** Atualização automática do status do pedido no banco de dados para "PAGO"[cite: 1].
+8. **E-mail de Confirmação:** Disparo automático de e-mail ao cliente com instruções para envio do arquivo `.docx`[cite: 1].
+
+## 🚀 Tecnologias Utilizadas
+
+- **Front-end:** Next.js 14 (App Router), React, Tailwind CSS.
+- **Back-end:** Next.js API Routes (Node.js).
+- **Linguagem:** TypeScript (Tipagem estática ponta a ponta).
+- **Integrações:** Mercado Pago (Checkout e Webhooks), Serviço SMTP (Envio de E-mails).
+- **Infraestrutura:** Docker e Docker Compose[cite: 1].
+- **Controle de Versão:** Git e GitHub Actions (CI/CD)[cite: 1].
+
+## 🛠️ Como executar o projeto localmente
+
+### Pré-requisitos
+Certifique-se de ter instalado em sua máquina:
+- [Node.js](https://nodejs.org/en/) (Versão 18+ recomendada)
+- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/) (Opcional para ambiente containerizado)
+
+### Passo a Passo
+
+1. **Clone o repositório:**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+git clone [https://github.com/SEU_USUARIO/simpleFormatABNT.git](https://github.com/SEU_USUARIO/simpleFormatABNT.git)
+cd simpleFormatABNT
