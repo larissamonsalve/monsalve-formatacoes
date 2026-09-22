@@ -1,17 +1,29 @@
 // src/app/page.tsx
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import styles from './page.module.css';
 
 export default function LandingPage() {
   const [step, setStep] = useState(1);
+  const [isScrolled, setIsScrolled] = useState(false);
+  
   const [formData, setFormData] = useState({
     nome: '', email: '', whatsapp: '',
     norma: 'ABNT', paginas: 10,
     prazo: 2, revisao: false, plagio: false, ia: false, comentarios: ''
   });
+  
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  // Controle do Header no Scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const total = useMemo(() => {
     let precoPorPagina = Number(formData.prazo);
@@ -41,34 +53,36 @@ export default function LandingPage() {
     }
   };
 
-  const scrollToForm = () => {
-    document.getElementById('orcamento')?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <div className={styles.mainContainer}>
       
-      {/* Header */}
-      <header className={styles.header}>
+      {/* Header Dinâmico */}
+      <header className={`${styles.header} ${isScrolled ? styles.headerScrolled : styles.headerTop}`}>
         <div className={styles.headerContent}>
-          <div className={styles.logoArea}>
+          <div className={styles.logoArea} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <div className={styles.logoIcon}>F</div>
             SimpleFormat ABNT
           </div>
           <nav className={styles.navLinks}>
-            <span className={styles.navLink} onClick={scrollToForm}>Serviços</span>
-            <span className={styles.navLink}>Como Funciona</span>
-            <span className={styles.navLink}>Depoimentos</span>
+            <span className={styles.navLink} onClick={() => scrollToSection('servicos')}>Serviços</span>
+            <span className={styles.navLink} onClick={() => scrollToSection('como-funciona')}>Como Funciona</span>
+            <span className={styles.navLink} onClick={() => scrollToSection('depoimentos')}>Depoimentos</span>
           </nav>
-          <button className={styles.headerBtn}>Área do Aluno</button>
+          <button onClick={() => scrollToSection('orcamento')} className={styles.headerBtn}>
+            Solicitar Orçamento
+          </button>
         </div>
       </header>
 
       {/* Hero Section */}
       <section className={styles.heroSection}>
         
-        {/* Coluna da Esquerda */}
-        <div className="lg:pr-8">
+        {/* Coluna da Esquerda (Entra primeiro) */}
+        <div className={`lg:pr-8 ${styles.animateUp}`}>
           <span className={styles.heroTag}>✨ Mais de 15.000 TCCs Aprovados</span>
           <h1 className={styles.mainTitle}>
             Aprovação sem estresse. Seu trabalho na formatação ideal.
@@ -76,14 +90,14 @@ export default function LandingPage() {
           <p className={styles.subtitle}>
             Economize semanas de esforço e garanta nota máxima na banca. Formatamos seu TCC, artigo ou dissertação seguindo estritamente todas as normas ABNT vigentes.
           </p>
-          <button onClick={scrollToForm} className={styles.heroBtn}>
+          <button onClick={() => scrollToSection('orcamento')} className={styles.heroBtn}>
             Fazer Orçamento 
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </div>
 
-        {/* Coluna da Direita (Formulário Wizard) */}
-        <div id="orcamento" className={styles.wizardCard}>
+        {/* Coluna da Direita (Entra com leve atraso) */}
+        <div id="orcamento" className={`${styles.wizardCard} ${styles.animateUp} ${styles.delay1}`}>
           <div className={styles.wizardHeader}>
             <span className={`${styles.stepIndicator} ${step >= 1 ? styles.stepIndicatorActive : styles.stepIndicatorInactive}`}>1. Documento</span>
             <span className={`${styles.stepIndicator} ${step >= 2 ? styles.stepIndicatorActive : styles.stepIndicatorInactive}`}>2. Serviços</span>
@@ -91,17 +105,16 @@ export default function LandingPage() {
           </div>
 
           {status === 'success' ? (
-            <div className="text-center py-8">
+            <div className={`text-center py-8 ${styles.animateUp}`}>
               <div className="w-20 h-20 bg-[#F3EBFF] text-[#5B3196] rounded-full flex items-center justify-center text-3xl mx-auto mb-6">✓</div>
               <h2 className="text-2xl font-bold text-[#2D1B4E] mb-3">Pedido Registrado!</h2>
               <p className="text-slate-600 text-sm max-w-sm mx-auto">Em breve um especialista chamará você no WhatsApp para confirmar os dados e iniciar a formatação.</p>
             </div>
           ) : (
             <form onSubmit={step === 3 ? handleSubmit : (e) => e.preventDefault()}>
-              
               {/* PASSO 1 */}
               {step === 1 && (
-                <div className={styles.formGroup}>
+                <div className={`${styles.formGroup} ${styles.animateUp}`}>
                   <div>
                     <label className={styles.inputLabel}>Norma Desejada</label>
                     <select className={styles.inputField} value={formData.norma} onChange={(e) => setFormData({...formData, norma: e.target.value})}>
@@ -119,7 +132,7 @@ export default function LandingPage() {
 
               {/* PASSO 2 */}
               {step === 2 && (
-                <div className={styles.formGroup}>
+                <div className={`${styles.formGroup} ${styles.animateUp}`}>
                   <label className={styles.inputLabel}>Prazo de Entrega (Preço base por pág.)</label>
                   <div className={styles.radioGrid}>
                     {[
@@ -134,7 +147,6 @@ export default function LandingPage() {
                       </label>
                     ))}
                   </div>
-
                   <label className="block text-sm font-bold text-[#2D1B4E] mt-2 mb-1">Serviços Extras</label>
                   <div className="flex flex-col gap-2">
                     <label className={styles.radioOption}>
@@ -147,7 +159,7 @@ export default function LandingPage() {
 
               {/* PASSO 3 */}
               {step === 3 && (
-                <div className={styles.formGroup}>
+                <div className={`${styles.formGroup} ${styles.animateUp}`}>
                   <div>
                     <label className={styles.inputLabel}>Nome Completo</label>
                     <input type="text" required className={styles.inputField} placeholder="Ex: Mariana Silva" value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} />
@@ -186,23 +198,67 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Secção Vantagens */}
-      <section className={styles.section}>
+      {/* NOVA SEÇÃO: Nossos Serviços */}
+      <section id="servicos" className={`${styles.section} bg-white border-y border-[#E7D6FF]`}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Nossos Serviços Acadêmicos</h2>
+          <p className={styles.sectionSubtitle}>
+            Tratamos cada documento de forma manual e personalizada. Entenda o que fazemos para garantir a sua aprovação na banca.
+          </p>
+        </div>
+        
+        <div className={styles.servicesGrid}>
+          <div className={`${styles.serviceCard} ${styles.animateUp}`}>
+            <div className={styles.serviceIcon}>📐</div>
+            <h3 className={styles.serviceTitle}>Formatação Estrutural</h3>
+            <p className={styles.serviceText}>
+              Ajuste de margens, espaçamento entrelinhas, fontes, paginação, sumário automático e criação de listas (figuras, tabelas, abreviaturas).
+            </p>
+          </div>
+          
+          <div className={`${styles.serviceCard} ${styles.animateUp} ${styles.delay1}`}>
+            <div className={styles.serviceIcon}>📚</div>
+            <h3 className={styles.serviceTitle}>Citações e Referências</h3>
+            <p className={styles.serviceText}>
+              Adequação rigorosa de todas as citações no corpo do texto e padronização completa das referências bibliográficas.
+            </p>
+          </div>
+          
+          <div className={`${styles.serviceCard} ${styles.animateUp} ${styles.delay2}`}>
+            <div className={styles.serviceIcon}>✍️</div>
+            <h3 className={styles.serviceTitle}>Revisão Ortográfica</h3>
+            <p className={styles.serviceText}>
+              Análise completa da gramática, concordância, coesão, coerência e correção de vícios de linguagem (Serviço extra opcional).
+            </p>
+          </div>
+          
+          <div className={`${styles.serviceCard} ${styles.animateUp} ${styles.delay3}`}>
+            <div className={styles.serviceIcon}>🔍</div>
+            <h3 className={styles.serviceTitle}>Manuais Específicos</h3>
+            <p className={styles.serviceText}>
+              Adaptação do seu TCC ou artigo científico de acordo com os manuais de publicação específicos da sua universidade.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Secção Vantagens (Como Funciona) */}
+      <section id="como-funciona" className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>Tudo o que você precisa para passar na <br/> banca sem problemas</h2>
         </div>
         <div className={styles.featuresGrid}>
-          <div className={styles.featureCard}>
+          <div className={`${styles.featureCard} ${styles.animateUp}`}>
             <div className={styles.featureIcon}>📄</div>
             <h3 className={styles.featureTitle}>Formatação Completa</h3>
             <p className={styles.featureText}>Margens, espaçamentos, sumário automático, referências bibliográficas, citações e listas de ilustrações revisadas.</p>
           </div>
-          <div className={styles.featureCard}>
+          <div className={`${styles.featureCard} ${styles.animateUp} ${styles.delay1}`}>
             <div className={styles.featureIcon}>⏱️</div>
             <h3 className={styles.featureTitle}>Entrega Rápida</h3>
             <p className={styles.featureText}>Trabalho concluído em até 48 horas úteis. Ideal para prazos finais apertados sem perder a qualidade.</p>
           </div>
-          <div className={styles.featureCard}>
+          <div className={`${styles.featureCard} ${styles.animateUp} ${styles.delay2}`}>
             <div className={styles.featureIcon}>🛡️</div>
             <h3 className={styles.featureTitle}>Revisão Inclusa</h3>
             <p className={styles.featureText}>Garantia de conformidade com reajustes gratuitos caso seu orientador sugira qualquer alteração de formato.</p>
@@ -211,12 +267,12 @@ export default function LandingPage() {
       </section>
 
       {/* Depoimentos */}
-      <section className={`${styles.section} bg-white mt-12 border-t border-[#E7D6FF]`}>
+      <section id="depoimentos" className={`${styles.section} bg-white mt-4 border-t border-[#E7D6FF]`}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>O que dizem os estudantes aprovados</h2>
         </div>
         <div className={styles.testimonialsGrid}>
-          <div className={styles.testimonialCard}>
+          <div className={`${styles.testimonialCard} ${styles.animateUp}`}>
             <div className={styles.stars}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -228,7 +284,7 @@ export default function LandingPage() {
             <p className={styles.testimonialAuthor}>Mariana Silva</p>
             <p className={styles.testimonialRole}>Graduada em Direito - USP</p>
           </div>
-          <div className={styles.testimonialCard}>
+          <div className={`${styles.testimonialCard} ${styles.animateUp} ${styles.delay1}`}>
             <div className={styles.stars}>
                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -240,7 +296,7 @@ export default function LandingPage() {
             <p className={styles.testimonialAuthor}>Carlos Eduardo</p>
             <p className={styles.testimonialRole}>Mestre em Engenharia - Unicamp</p>
           </div>
-          <div className={styles.testimonialCard}>
+          <div className={`${styles.testimonialCard} ${styles.animateUp} ${styles.delay2}`}>
             <div className={styles.stars}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -255,11 +311,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer Completo */}
+      {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerContent}>
           <div className={styles.footerBrand}>
-            <div className={styles.footerLogo}>
+            <div className={styles.footerLogo} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <div className={styles.logoIcon}>F</div>
               SimpleFormat ABNT
             </div>

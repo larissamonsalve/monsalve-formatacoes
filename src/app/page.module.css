@@ -1,25 +1,50 @@
 /* src/app/page.module.css */
 @reference "./globals.css";
 
-.mainContainer {
-  @apply min-h-screen bg-[#FCFAFF] text-slate-800 font-sans relative flex flex-col;
+/* --- ANIMAÇÕES GERAIS --- */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Header */
+.animateUp {
+  opacity: 0;
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay1 { animation-delay: 0.1s; }
+.delay2 { animation-delay: 0.2s; }
+.delay3 { animation-delay: 0.3s; }
+.delay4 { animation-delay: 0.4s; }
+
+/* --- ESTRUTURA GERAL --- */
+.mainContainer {
+  @apply min-h-screen bg-[#FCFAFF] text-slate-800 font-sans relative flex flex-col overflow-x-hidden;
+}
+
+/* Header Dinâmico */
 .header {
-  @apply fixed top-0 w-full bg-[#FCFAFF]/95 backdrop-blur-md z-50 border-b border-[#E7D6FF];
+  @apply fixed top-0 w-full z-50 transition-all duration-300;
+}
+
+.headerTop {
+  @apply bg-transparent py-6;
+}
+
+.headerScrolled {
+  @apply bg-[#FCFAFF]/90 backdrop-blur-md py-4 border-b border-[#E7D6FF] shadow-sm;
 }
 
 .headerContent {
-  @apply max-w-7xl mx-auto px-6 py-4 flex justify-between items-center;
+  @apply max-w-7xl mx-auto px-6 flex justify-between items-center;
 }
 
 .logoArea {
-  @apply flex items-center gap-3 font-bold text-xl text-[#2D1B4E] cursor-pointer;
+  @apply flex items-center gap-3 font-bold text-xl text-[#2D1B4E] cursor-pointer hover:scale-105 transition-transform;
 }
 
 .logoIcon {
-  @apply w-8 h-8 bg-[#5B3196] text-[#D4AF37] flex items-center justify-center rounded text-lg;
+  @apply w-8 h-8 bg-[#5B3196] text-[#D4AF37] flex items-center justify-center rounded text-lg shadow-md;
 }
 
 .navLinks {
@@ -27,16 +52,16 @@
 }
 
 .navLink {
-  @apply hover:text-[#5B3196] transition-colors cursor-pointer;
+  @apply hover:text-[#5B3196] transition-colors cursor-pointer relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#D4AF37] after:transition-all hover:after:w-full;
 }
 
 .headerBtn {
-  @apply hidden md:block px-6 py-2 bg-[#F3EBFF] text-[#5B3196] text-sm font-bold rounded-lg hover:bg-[#E7D6FF] transition-colors;
+  @apply hidden md:block px-6 py-2 bg-[#F3EBFF] text-[#5B3196] text-sm font-bold rounded-lg hover:bg-[#5B3196] hover:text-white transition-colors duration-300 shadow-sm;
 }
 
-/* Hero Section (Textos redimensionados e mais espaço inferior) */
+/* Hero Section */
 .heroSection {
-  @apply pt-32 md:pt-40 pb-32 lg:pb-24 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center;
+  @apply pt-36 md:pt-44 pb-32 lg:pb-24 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center;
 }
 
 .heroTag {
@@ -55,9 +80,9 @@
   @apply inline-flex lg:hidden items-center gap-3 px-8 py-4 bg-[#D4AF37] hover:bg-[#C5A028] text-white font-bold rounded-xl transition-transform hover:-translate-y-1 shadow-lg shadow-[#d4af374d];
 }
 
-/* Formulário Wizard (Mais compacto e com margem inferior no mobile) */
+/* Formulário Wizard */
 .wizardCard {
-  @apply bg-white p-6 md:p-8 rounded-2xl shadow-2xl shadow-[#5b31961a] w-full border border-[#E7D6FF] relative overflow-hidden mb-12 lg:mb-0;
+  @apply bg-white p-6 md:p-8 rounded-2xl shadow-2xl shadow-[#5b31961a] w-full border border-[#E7D6FF] relative overflow-hidden mb-12 lg:mb-0 hover:shadow-[0_25px_50px_-12px_rgba(91,49,150,0.15)] transition-shadow duration-500;
 }
 
 .wizardCard::before {
@@ -98,7 +123,7 @@
 }
 
 .radioOption {
-  @apply flex items-center p-3 border border-[#E7D6FF] rounded-xl cursor-pointer hover:border-[#D4AF37] hover:bg-[#FFFCF5] transition-all bg-[#FCFAFF];
+  @apply flex items-center p-3 border border-[#E7D6FF] rounded-xl cursor-pointer hover:border-[#D4AF37] hover:bg-[#FFFCF5] hover:shadow-sm transition-all duration-300 bg-[#FCFAFF];
 }
 
 .radioInput {
@@ -110,7 +135,7 @@
 }
 
 .totalPrice {
-  @apply text-2xl md:text-3xl font-black text-[#5B3196];
+  @apply text-2xl md:text-3xl font-black text-[#5B3196] transition-all;
 }
 
 .btnSecondary {
@@ -118,10 +143,10 @@
 }
 
 .btnPrimary {
-  @apply px-6 py-3 md:px-8 bg-[#D4AF37] hover:bg-[#C5A028] text-white font-bold rounded-xl transition-transform hover:scale-105 shadow-lg disabled:opacity-70 disabled:hover:scale-100;
+  @apply px-6 py-3 md:px-8 bg-[#D4AF37] hover:bg-[#C5A028] text-white font-bold rounded-xl transition-transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-70 disabled:hover:scale-100;
 }
 
-/* Vantagens */
+/* Secções Gerais */
 .section {
   @apply py-20 px-6 max-w-7xl mx-auto;
 }
@@ -131,26 +156,54 @@
 }
 
 .sectionTitle {
-  @apply text-3xl md:text-4xl font-extrabold text-[#2D1B4E];
+  @apply text-3xl md:text-4xl font-extrabold text-[#2D1B4E] mb-4;
+}
+
+.sectionSubtitle {
+  @apply text-slate-600 max-w-2xl mx-auto text-lg;
+}
+
+/* Serviços e Vantagens (Com Micro-interações) */
+.servicesGrid, .featuresGrid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
 }
 
 .featuresGrid {
-  @apply grid grid-cols-1 md:grid-cols-3 gap-8;
+  @apply lg:grid-cols-3 gap-8;
+}
+
+.serviceCard, .featureCard {
+  @apply bg-white p-8 rounded-2xl shadow-sm border border-[#E7D6FF] transition-all duration-300 hover:-translate-y-3 hover:shadow-xl hover:shadow-[#5b31961a] cursor-default;
 }
 
 .featureCard {
-  @apply bg-white p-8 rounded-2xl shadow-sm border border-[#E7D6FF] hover:shadow-md hover:-translate-y-2 transition-all duration-300 text-center flex flex-col items-center;
+  @apply text-center flex flex-col items-center;
+}
+
+.serviceIcon, .featureIcon {
+  @apply w-12 h-12 bg-[#F3EBFF] text-[#5B3196] rounded-xl flex items-center justify-center text-2xl mb-6 font-black transition-transform duration-500;
 }
 
 .featureIcon {
-  @apply w-14 h-14 bg-[#F3EBFF] text-[#5B3196] rounded-full flex items-center justify-center text-2xl mb-6 shadow-inner;
+  @apply w-14 h-14 rounded-full shadow-inner;
 }
 
-.featureTitle {
-  @apply text-xl font-bold text-[#2D1B4E] mb-3;
+/* O Segredo da animação do ícone no hover do cartão */
+.serviceCard:hover .serviceIcon, .featureCard:hover .featureIcon {
+  @apply bg-[#5B3196] text-[#D4AF37] rotate-6 scale-110 shadow-lg;
 }
 
-.featureText {
+.serviceTitle, .featureTitle {
+  @apply text-lg font-bold text-[#2D1B4E] mb-3 leading-tight transition-colors;
+}
+
+.featureTitle { @apply text-xl; }
+
+.serviceCard:hover .serviceTitle, .featureCard:hover .featureTitle {
+  @apply text-[#D4AF37];
+}
+
+.serviceText, .featureText {
   @apply text-sm text-slate-600 leading-relaxed;
 }
 
@@ -160,11 +213,15 @@
 }
 
 .testimonialCard {
-  @apply bg-white p-8 rounded-2xl shadow-sm border border-[#E7D6FF];
+  @apply bg-white p-8 rounded-2xl shadow-sm border border-[#E7D6FF] hover:-translate-y-1 hover:shadow-md transition-all duration-300;
 }
 
 .stars {
-  @apply text-[#D4AF37] text-lg mb-4 tracking-widest flex;
+  @apply text-[#D4AF37] text-lg mb-4 tracking-widest flex transition-transform duration-300;
+}
+
+.testimonialCard:hover .stars {
+  @apply scale-105 origin-left;
 }
 
 .testimonialText {
@@ -193,7 +250,7 @@
 }
 
 .footerLogo {
-  @apply flex items-center gap-3 font-bold text-xl mb-6 text-white;
+  @apply flex items-center gap-3 font-bold text-xl mb-6 text-white hover:text-[#D4AF37] transition-colors cursor-pointer;
 }
 
 .footerText {
@@ -209,13 +266,21 @@
 }
 
 .footerLink {
-  @apply text-[#E7D6FF] hover:text-white text-sm transition-colors cursor-pointer;
+  @apply text-[#E7D6FF] hover:translate-x-1 hover:text-white text-sm transition-transform cursor-pointer;
 }
 
 .footerBottom {
   @apply max-w-7xl mx-auto px-6 pt-8 border-t border-[#5B3196] flex flex-col md:flex-row justify-between items-center text-xs text-[#E7D6FF];
 }
 
+/* Botão WhatsApp Pulsante */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
 .whatsappButton {
   @apply fixed bottom-6 right-6 bg-[#25D366] hover:bg-[#1EBE5D] text-white px-5 py-3 rounded-full shadow-lg transition-transform hover:-translate-y-1 flex items-center gap-2 font-bold z-50;
+  animation: pulseGlow 2s infinite;
 }
