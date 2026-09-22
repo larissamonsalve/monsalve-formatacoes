@@ -1,4 +1,4 @@
-# 🎓 simpleFormatABNT
+# 🎓 Monsalve Formatações
 
 <div align="center">
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">
@@ -18,7 +18,7 @@ Projeto desenvolvido como requisito para a disciplina de **Projeto Integrador** 
 
 ## 📋 Visão Geral
 
-O **simpleFormatABNT** é uma aplicação web full stack voltada para a comercialização de serviços de consultoria e formatação de trabalhos acadêmicos. O sistema abrange todo o funil de vendas: desde a apresentação do serviço, captação de leads, verificação de segurança (OTP), até o processamento financeiro e notificação de compra aprovada.
+A **Monsalve Formatações** é uma aplicação web full stack voltada para a comercialização de serviços de consultoria e formatação de trabalhos acadêmicos. O sistema abrange todo o funil de vendas: desde a apresentação do serviço, captação de leads, verificação de segurança (OTP), até o processamento financeiro e notificação de compra aprovada.
 
 ## ✨ Funcionalidades (Fluxo de Venda)
 
@@ -53,5 +53,5 @@ Certifique-se de ter instalado em sua máquina:
 
 1. **Clone o repositório:**
 ```bash
-git clone [https://github.com/SEU_USUARIO/simpleFormatABNT.git](https://github.com/SEU_USUARIO/simpleFormatABNT.git)
-cd simpleFormatABNT
+git clone [https://github.com/SEU_USUARIO/monsalve-formatacoes.git](https://github.com/SEU_USUARIO/monsalve-formatacoes.git)
+cd monsalve-formatacoes

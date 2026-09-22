@@ -65,7 +65,7 @@ export default function LandingPage() {
         <div className={styles.headerContent}>
           <div className={styles.logoArea} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <div className={styles.logoIcon}>F</div>
-            SimpleFormat ABNT
+            Monsalve Formatações
           </div>
           <nav className={styles.navLinks}>
             <span className={styles.navLink} onClick={() => scrollToSection('servicos')}>Serviços</span>
@@ -317,7 +317,7 @@ export default function LandingPage() {
           <div className={styles.footerBrand}>
             <div className={styles.footerLogo} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <div className={styles.logoIcon}>F</div>
-              SimpleFormat ABNT
+              Monsalve Formatações
             </div>
             <p className={styles.footerText}>
               Sua aprovação garantida através de formatação profissional rigorosa, revisada de acordo com as normas ABNT vigentes.
@@ -341,13 +341,13 @@ export default function LandingPage() {
           </div>
         </div>
         <div className={styles.footerBottom}>
-          <p>© 2026 SimpleFormat ABNT. Todos os direitos reservados.</p>
+          <p>© 2026 Monsalve Formatações. Todos os direitos reservados.</p>
           <p>Desenvolvido com excelência acadêmica.</p>
         </div>
       </footer>
 
       {/* Botão Flutuante do WhatsApp */}
-      <a href="https://wa.me/5592900000000" target="_blank" rel="noopener noreferrer" className={styles.whatsappButton}>
+      <a href="https://wa.me/5592994737897" target="_blank" rel="noopener noreferrer" className={styles.whatsappButton}>
         Fale Conosco
       </a>
     </div>
