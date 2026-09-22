@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import Image from 'next/image';
 import styles from './page.module.css';
 
 export default function LandingPage() {
@@ -64,8 +65,15 @@ export default function LandingPage() {
       <header className={`${styles.header} ${isScrolled ? styles.headerScrolled : styles.headerTop}`}>
         <div className={styles.headerContent}>
           <div className={styles.logoArea} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <div className={styles.logoIcon}>F</div>
-            Monsalve Formatações
+            <Image 
+              src="/logo2.jpg" 
+              alt="Ícone Monsalve Formatações" 
+              width={60} 
+              height={60} 
+              className="h-10 w-auto rounded-md mix-blend-multiply" 
+              priority 
+            />
+            <span className="font-extrabold tracking-tight">Monsalve Formatações</span>
           </div>
           <nav className={styles.navLinks}>
             <span className={styles.navLink} onClick={() => scrollToSection('servicos')}>Serviços</span>
@@ -316,8 +324,13 @@ export default function LandingPage() {
         <div className={styles.footerContent}>
           <div className={styles.footerBrand}>
             <div className={styles.footerLogo} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <div className={styles.logoIcon}>F</div>
-              Monsalve Formatações
+              <Image 
+                src="/logo.jpg" 
+                alt="Monsalve Formatações Completa" 
+                width={400} 
+                height={400} 
+                className="h-24 w-auto rounded-xl bg-white p-2 shadow-sm" 
+              />
             </div>
             <p className={styles.footerText}>
               Sua aprovação garantida através de formatação profissional rigorosa, revisada de acordo com as normas ABNT vigentes.
