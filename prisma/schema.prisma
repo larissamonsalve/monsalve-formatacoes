@@ -10,9 +10,20 @@ datasource db {
 }
 
 model Lead {
-  id        String   @id @default(uuid())
-  nome      String
-  email     String
-  whatsapp  String
-  createdAt DateTime @default(now())
+  id            String   @id @default(uuid())
+  nome          String
+  email         String
+  whatsapp      String
+  
+  // Novos campos do orçamento
+  norma         String
+  paginas       Int
+  prazo         Int      // Guarda o valor base do prazo escolhido
+  revisao       Boolean  @default(false)
+  plagio        Boolean  @default(false)
+  ia            Boolean  @default(false)
+  valorEstimado Float    // Guarda o valor total calculado
+  comentarios   String?  // O sinal de interrogação indica que é opcional
+  
+  createdAt     DateTime @default(now())
 }

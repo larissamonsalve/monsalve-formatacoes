@@ -7,22 +7,37 @@ const prisma = new PrismaClient();
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { nome, email, whatsapp } = body;
+    
+    // Desestruturando todos os dados enviados pelo Front-end
+    const { 
+      nome, email, whatsapp, 
+      norma, paginas, prazo, 
+      revisao, plagio, ia, 
+      valorEstimado, comentarios 
+    } = body;
 
-    // Validação de segurança básica
-    if (!nome || !email || !whatsapp) {
+    // Validação de segurança dos campos obrigatórios
+    if (!nome || !email || !whatsapp || !norma || !paginas || !prazo || valorEstimado === undefined) {
       return NextResponse.json(
-        { error: 'Todos os campos são obrigatórios.' },
+        { error: 'Campos obrigatórios ausentes.' },
         { status: 400 }
       );
     }
 
-    // Salva o Lead no banco de dados do Docker
+    // Salva o Lead completo no PostgreSQL
     const lead = await prisma.lead.create({
       data: {
         nome,
         email,
         whatsapp,
+        norma,
+        paginas: Number(paginas),
+        prazo: Number(prazo),
+        revisao: Boolean(revisao),
+        plagio: Boolean(plagio),
+        ia: Boolean(ia),
+        valorEstimado: Number(valorEstimado),
+        comentarios: comentarios || '',
       },
     });
 
@@ -30,7 +45,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Erro ao salvar lead:', error);
     return NextResponse.json(
-      { error: 'Erro interno no servidor ao tentar salvar o lead.' },
+      { error: 'Erro interno no servidor.' },
       { status: 500 }
     );
   }

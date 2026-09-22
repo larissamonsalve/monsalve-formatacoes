@@ -1,125 +1,299 @@
 // src/app/page.tsx
 'use client';
 
-import { useState } from 'react';
-import styles from './page.module.css'; // Importando os estilos separados
+import { useState, useMemo } from 'react';
+import styles from './page.module.css';
 
 export default function LandingPage() {
-  const [formData, setFormData] = useState({ nome: '', email: '', whatsapp: '' });
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    nome: '', email: '', whatsapp: '',
+    norma: 'ABNT', paginas: 10,
+    prazo: 2, revisao: false, plagio: false, ia: false, comentarios: ''
+  });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const total = useMemo(() => {
+    let precoPorPagina = Number(formData.prazo);
+    if (formData.revisao) precoPorPagina += 2;
+    if (formData.plagio) precoPorPagina += 1;
+    if (formData.ia) precoPorPagina += 2;
+    return formData.paginas * precoPorPagina;
+  }, [formData.prazo, formData.revisao, formData.plagio, formData.ia, formData.paginas]);
+
+  const nextStep = () => setStep((prev) => prev + 1);
+  const prevStep = () => setStep((prev) => prev - 1);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
-
     try {
       const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, valorEstimado: total }),
       });
-
-      if (!response.ok) {
-        throw new Error('Falha ao cadastrar');
-      }
-      
+      if (!response.ok) throw new Error('Falha ao cadastrar');
       setStatus('success');
-      setFormData({ nome: '', email: '', whatsapp: '' });
     } catch (error) {
       console.error(error);
       setStatus('error');
     }
   };
 
+  const scrollToForm = () => {
+    document.getElementById('orcamento')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <main className={styles.mainContainer}>
+    <div className={styles.mainContainer}>
       
-      {/* Seção Principal (Hero) */}
+      {/* Header */}
+      <header className={styles.header}>
+        <div className={styles.headerContent}>
+          <div className={styles.logoArea}>
+            <div className={styles.logoIcon}>F</div>
+            SimpleFormat ABNT
+          </div>
+          <nav className={styles.navLinks}>
+            <span className={styles.navLink} onClick={scrollToForm}>Serviços</span>
+            <span className={styles.navLink}>Como Funciona</span>
+            <span className={styles.navLink}>Depoimentos</span>
+          </nav>
+          <button className={styles.headerBtn}>Área do Aluno</button>
+        </div>
+      </header>
+
+      {/* Hero Section */}
       <section className={styles.heroSection}>
-        <h1 className={styles.mainTitle}>
-          Sua Formatação ABNT <br className="hidden md:block"/>
-          <span className={styles.highlightText}>Sem Estresse e no Prazo</span>
-        </h1>
-        <p className={styles.subtitle}>
-          Cuidamos de todas as normas (margens, citações, sumário) do seu TCC, artigo ou dissertação para você focar apenas no conteúdo.
-        </p>
+        
+        {/* Coluna da Esquerda */}
+        <div className="lg:pr-8">
+          <span className={styles.heroTag}>✨ Mais de 15.000 TCCs Aprovados</span>
+          <h1 className={styles.mainTitle}>
+            Aprovação sem estresse. Seu trabalho na formatação ideal.
+          </h1>
+          <p className={styles.subtitle}>
+            Economize semanas de esforço e garanta nota máxima na banca. Formatamos seu TCC, artigo ou dissertação seguindo estritamente todas as normas ABNT vigentes.
+          </p>
+          <button onClick={scrollToForm} className={styles.heroBtn}>
+            Fazer Orçamento 
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
 
-        {/* Caixa do Formulário */}
-        <div className={styles.formCard}>
-          <h2 className={styles.formTitle}>Inicie seu orçamento</h2>
-          
-          {status === 'success' && (
-            <div className={styles.successMessage}>
-              ✅ Cadastro realizado com sucesso! Em breve entraremos em contato.
+        {/* Coluna da Direita (Formulário Wizard) */}
+        <div id="orcamento" className={styles.wizardCard}>
+          <div className={styles.wizardHeader}>
+            <span className={`${styles.stepIndicator} ${step >= 1 ? styles.stepIndicatorActive : styles.stepIndicatorInactive}`}>1. Documento</span>
+            <span className={`${styles.stepIndicator} ${step >= 2 ? styles.stepIndicatorActive : styles.stepIndicatorInactive}`}>2. Serviços</span>
+            <span className={`${styles.stepIndicator} ${step >= 3 ? styles.stepIndicatorActive : styles.stepIndicatorInactive}`}>3. Dados</span>
+          </div>
+
+          {status === 'success' ? (
+            <div className="text-center py-8">
+              <div className="w-20 h-20 bg-[#F3EBFF] text-[#5B3196] rounded-full flex items-center justify-center text-3xl mx-auto mb-6">✓</div>
+              <h2 className="text-2xl font-bold text-[#2D1B4E] mb-3">Pedido Registrado!</h2>
+              <p className="text-slate-600 text-sm max-w-sm mx-auto">Em breve um especialista chamará você no WhatsApp para confirmar os dados e iniciar a formatação.</p>
             </div>
+          ) : (
+            <form onSubmit={step === 3 ? handleSubmit : (e) => e.preventDefault()}>
+              
+              {/* PASSO 1 */}
+              {step === 1 && (
+                <div className={styles.formGroup}>
+                  <div>
+                    <label className={styles.inputLabel}>Norma Desejada</label>
+                    <select className={styles.inputField} value={formData.norma} onChange={(e) => setFormData({...formData, norma: e.target.value})}>
+                      <option value="ABNT">ABNT</option>
+                      <option value="APA">APA</option>
+                      <option value="Vancouver">Vancouver</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={styles.inputLabel}>Quantidade de Páginas (Estimada)</label>
+                    <input type="number" min="1" required className={styles.inputField} value={formData.paginas} onChange={(e) => setFormData({...formData, paginas: Number(e.target.value)})} />
+                  </div>
+                </div>
+              )}
+
+              {/* PASSO 2 */}
+              {step === 2 && (
+                <div className={styles.formGroup}>
+                  <label className={styles.inputLabel}>Prazo de Entrega (Preço base por pág.)</label>
+                  <div className={styles.radioGrid}>
+                    {[
+                      { label: '72 horas', preco: 2 },
+                      { label: '48 horas', preco: 3 },
+                      { label: '24 horas', preco: 4 },
+                      { label: '12 horas', preco: 6 },
+                    ].map((opcao) => (
+                      <label key={opcao.preco} className={styles.radioOption}>
+                        <input type="radio" name="prazo" className={styles.radioInput} value={opcao.preco} checked={formData.prazo == opcao.preco} onChange={(e) => setFormData({...formData, prazo: Number(e.target.value)})} />
+                        <span className="font-medium text-slate-700 text-sm">{opcao.label} <span className="text-[#D4AF37] font-bold block md:inline">(R$ {opcao.preco})</span></span>
+                      </label>
+                    ))}
+                  </div>
+
+                  <label className="block text-sm font-bold text-[#2D1B4E] mt-2 mb-1">Serviços Extras</label>
+                  <div className="flex flex-col gap-2">
+                    <label className={styles.radioOption}>
+                      <input type="checkbox" className={styles.radioInput} checked={formData.revisao} onChange={(e) => setFormData({...formData, revisao: e.target.checked})} />
+                      <span className="text-slate-700 text-sm">Revisão Ortográfica <span className="text-[#D4AF37] font-bold">(+ R$ 2/pág)</span></span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* PASSO 3 */}
+              {step === 3 && (
+                <div className={styles.formGroup}>
+                  <div>
+                    <label className={styles.inputLabel}>Nome Completo</label>
+                    <input type="text" required className={styles.inputField} placeholder="Ex: Mariana Silva" value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} />
+                  </div>
+                  <div>
+                    <label className={styles.inputLabel}>E-mail Acadêmico</label>
+                    <input type="email" required className={styles.inputField} placeholder="mariana@universidade.edu.br" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+                  </div>
+                  <div>
+                    <label className={styles.inputLabel}>WhatsApp</label>
+                    <input type="tel" required className={styles.inputField} placeholder="(11) 98765-4321" value={formData.whatsapp} onChange={(e) => setFormData({...formData, whatsapp: e.target.value})} />
+                  </div>
+                </div>
+              )}
+
+              <div className={styles.wizardFooter}>
+                <div>
+                  {step > 1 && <button type="button" onClick={prevStep} className={styles.btnSecondary}>Voltar</button>}
+                </div>
+                <div className="flex items-center gap-4 md:gap-6">
+                  <div className="text-right hidden sm:block">
+                    <span className="block text-[10px] text-[#5B3196] uppercase font-bold tracking-widest">Valor Estimado</span>
+                    <span className={styles.totalPrice}>R$ {total.toFixed(2).replace('.', ',')}</span>
+                  </div>
+                  {step < 3 ? (
+                    <button type="button" onClick={nextStep} className={styles.btnPrimary}>Avançar</button>
+                  ) : (
+                    <button type="submit" disabled={status === 'loading'} className={styles.btnPrimary}>
+                      {status === 'loading' ? 'Enviando...' : 'Finalizar'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </form>
           )}
-
-          {status === 'error' && (
-            <div className={styles.errorMessage}>
-              ❌ Ocorreu um erro ao tentar cadastrar. Tente novamente.
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className={styles.formGroup}>
-            <div>
-              <label className={styles.inputLabel}>Nome Completo</label>
-              <input
-                type="text"
-                required
-                className={styles.inputField}
-                placeholder="Ex: João da Silva"
-                value={formData.nome}
-                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-              />
-            </div>
-            
-            <div>
-              <label className={styles.inputLabel}>E-mail Acadêmico ou Pessoal</label>
-              <input
-                type="email"
-                required
-                className={styles.inputField}
-                placeholder="exemplo@email.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className={styles.inputLabel}>WhatsApp</label>
-              <input
-                type="tel"
-                required
-                placeholder="(92) 90000-0000"
-                className={styles.inputField}
-                value={formData.whatsapp}
-                onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={status === 'loading'}
-              className={styles.submitButton}
-            >
-              {status === 'loading' ? 'Enviando...' : 'Quero Formatar Meu Trabalho'}
-            </button>
-          </form>
         </div>
       </section>
 
+      {/* Secção Vantagens */}
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Tudo o que você precisa para passar na <br/> banca sem problemas</h2>
+        </div>
+        <div className={styles.featuresGrid}>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>📄</div>
+            <h3 className={styles.featureTitle}>Formatação Completa</h3>
+            <p className={styles.featureText}>Margens, espaçamentos, sumário automático, referências bibliográficas, citações e listas de ilustrações revisadas.</p>
+          </div>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>⏱️</div>
+            <h3 className={styles.featureTitle}>Entrega Rápida</h3>
+            <p className={styles.featureText}>Trabalho concluído em até 48 horas úteis. Ideal para prazos finais apertados sem perder a qualidade.</p>
+          </div>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>🛡️</div>
+            <h3 className={styles.featureTitle}>Revisão Inclusa</h3>
+            <p className={styles.featureText}>Garantia de conformidade com reajustes gratuitos caso seu orientador sugira qualquer alteração de formato.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Depoimentos */}
+      <section className={`${styles.section} bg-white mt-12 border-t border-[#E7D6FF]`}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>O que dizem os estudantes aprovados</h2>
+        </div>
+        <div className={styles.testimonialsGrid}>
+          <div className={styles.testimonialCard}>
+            <div className={styles.stars}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <p className={styles.testimonialText}>"Eu estava desesperada com as referências bibliográficas do meu TCC. A equipe formatou tudo perfeitamente em 2 dias. Nota 10 na apresentação!"</p>
+            <p className={styles.testimonialAuthor}>Mariana Silva</p>
+            <p className={styles.testimonialRole}>Graduada em Direito - USP</p>
+          </div>
+          <div className={styles.testimonialCard}>
+            <div className={styles.stars}>
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <p className={styles.testimonialText}>"Trabalho acadêmico impecável. Economizei o tempo que usaria batendo cabeça com as margens do Word para me preparar para a banca."</p>
+            <p className={styles.testimonialAuthor}>Carlos Eduardo</p>
+            <p className={styles.testimonialRole}>Mestre em Engenharia - Unicamp</p>
+          </div>
+          <div className={styles.testimonialCard}>
+            <div className={styles.stars}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <p className={styles.testimonialText}>"Serviço essencial para quem trabalha e estuda ao mesmo tempo. Suporte atencioso e entrega antes do prazo combinado."</p>
+            <p className={styles.testimonialAuthor}>Juliana Pires</p>
+            <p className={styles.testimonialRole}>Graduada em Administração - FGV</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Completo */}
+      <footer className={styles.footer}>
+        <div className={styles.footerContent}>
+          <div className={styles.footerBrand}>
+            <div className={styles.footerLogo}>
+              <div className={styles.logoIcon}>F</div>
+              SimpleFormat ABNT
+            </div>
+            <p className={styles.footerText}>
+              Sua aprovação garantida através de formatação profissional rigorosa, revisada de acordo com as normas ABNT vigentes.
+            </p>
+          </div>
+          <div>
+            <h4 className={styles.footerTitle}>Serviços</h4>
+            <div className={styles.footerLinks}>
+              <span className={styles.footerLink}>Trabalhos Acadêmicos</span>
+              <span className={styles.footerLink}>TCC & Monografias</span>
+              <span className={styles.footerLink}>Artigos Científicos</span>
+            </div>
+          </div>
+          <div>
+            <h4 className={styles.footerTitle}>Suporte</h4>
+            <div className={styles.footerLinks}>
+              <span className={styles.footerLink}>Contato</span>
+              <span className={styles.footerLink}>Termos de Uso</span>
+              <span className={styles.footerLink}>Privacidade</span>
+            </div>
+          </div>
+        </div>
+        <div className={styles.footerBottom}>
+          <p>© 2026 SimpleFormat ABNT. Todos os direitos reservados.</p>
+          <p>Desenvolvido com excelência acadêmica.</p>
+        </div>
+      </footer>
+
       {/* Botão Flutuante do WhatsApp */}
-      <a
-        href="https://wa.me/5592994737897?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20a%20formatação%20ABNT."
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.whatsappButton}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
-        </svg>
+      <a href="https://wa.me/5592900000000" target="_blank" rel="noopener noreferrer" className={styles.whatsappButton}>
         Fale Conosco
       </a>
-    </main>
+    </div>
   );
 }
