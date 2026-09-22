@@ -1,6 +1,6 @@
 services:
   app:
-    container_name: simpleformat_abnt
+    container_name: simpleformat_abnt_app
     build:
       context: .
       dockerfile: Dockerfile
@@ -9,3 +9,22 @@ services:
     restart: always
     environment:
       - NODE_ENV=production
+      - DATABASE_URL=postgresql://admin:admin123@db:5432/simpleformat_db?schema=public
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: simpleformat_abnt_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: simpleformat_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
