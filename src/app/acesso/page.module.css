@@ -1,0 +1,102 @@
+/* src/app/acesso/page.module.css */
+@reference "../globals.css";
+
+.container {
+  @apply min-h-screen bg-[#FCFAFF] flex flex-col items-center justify-center p-6 text-slate-800 font-sans relative overflow-hidden;
+}
+
+/* Decorações de Fundo */
+.bgGradient {
+  @apply absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#5B3196] to-[#D4AF37];
+}
+.blurTop {
+  @apply absolute -top-24 -left-24 w-64 h-64 bg-[#5b31960d] rounded-full blur-3xl;
+}
+.blurBottom {
+  @apply absolute -bottom-24 -right-24 w-80 h-80 bg-[#d4af371a] rounded-full blur-3xl;
+}
+
+/* Logo */
+.logoLink {
+  @apply mb-8 relative z-10 hover:scale-105 transition-transform;
+}
+.logoImage {
+  @apply rounded-xl shadow-sm mix-blend-multiply;
+}
+
+/* Cartão Principal */
+.card {
+  @apply bg-white p-8 md:p-10 rounded-2xl shadow-2xl shadow-[#5b31961a] w-full max-w-md border border-[#E7D6FF] relative z-10;
+}
+
+/* Formulários e Animações Corrigidas via CSS Nativo */
+.formFadeIn {
+  @apply flex flex-col gap-5;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+.successContainer {
+  @apply text-center py-6;
+  animation: zoomIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.headerText {
+  @apply text-center mb-2;
+}
+.title {
+  @apply text-2xl font-extrabold text-[#2D1B4E];
+}
+.subtitle {
+  @apply text-sm text-slate-600 mt-2;
+}
+
+/* Inputs */
+.label {
+  @apply block text-sm font-bold text-[#2D1B4E] mb-1;
+}
+.labelCenter {
+  @apply block text-sm font-bold text-[#2D1B4E] mb-1 text-center;
+}
+.inputEmail {
+  @apply w-full px-4 py-3 bg-[#FCFAFF] border border-[#E7D6FF] rounded-xl text-slate-700 focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all;
+}
+.inputOtp {
+  @apply w-full px-4 py-4 text-center text-3xl tracking-[0.5em] font-black bg-[#FCFAFF] border border-[#E7D6FF] rounded-xl text-[#2D1B4E] focus:ring-2 focus:ring-[#D4AF37] outline-none transition-all;
+}
+
+/* Mensagens e Botões */
+.errorText {
+  @apply text-red-500 text-sm text-center font-medium;
+}
+.btnPrimary {
+  @apply w-full py-3 bg-[#5B3196] hover:bg-[#462475] text-white font-bold rounded-xl transition-all shadow-md disabled:opacity-70 mt-2;
+}
+.btnSecondary {
+  @apply w-full py-3 bg-[#D4AF37] hover:bg-[#C5A028] text-white font-bold rounded-xl transition-all shadow-md shadow-[#d4af374d] disabled:opacity-70 mt-2;
+}
+.btnText {
+  @apply text-sm text-slate-500 hover:text-[#5B3196] font-medium text-center transition-colors;
+}
+
+/* Tela de Sucesso */
+.successIcon {
+  @apply w-20 h-20 bg-[#F3EBFF] text-[#5B3196] rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-inner;
+}
+.successText {
+  @apply text-slate-600 text-sm mb-8;
+}
+.btnOutline {
+  @apply inline-block px-8 py-3 bg-[#F3EBFF] hover:bg-[#E7D6FF] text-[#5B3196] font-bold rounded-xl transition-all;
+}
+.footerText {
+  @apply text-xs text-slate-400 mt-8 relative z-10;
+}

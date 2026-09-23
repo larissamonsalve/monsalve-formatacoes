@@ -4,8 +4,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './page.module.css';
+import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [isScrolled, setIsScrolled] = useState(false);
   
@@ -37,21 +39,18 @@ export default function LandingPage() {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
+  // A Nova Função de Envio Segura (Redireciona para o OTP)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('loading');
-    try {
-      const response = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, valorEstimado: total }),
-      });
-      if (!response.ok) throw new Error('Falha ao cadastrar');
-      setStatus('success');
-    } catch (error) {
-      console.error(error);
-      setStatus('error');
-    }
+    
+    // Guarda os dados localmente para o Back-end resgatar após a validação OTP
+    localStorage.setItem('lead_pendente', JSON.stringify({ 
+      ...formData, 
+      valorEstimado: total 
+    }));
+
+    // Redireciona de imediato para a tela de Acesso Seguro, enviando o e-mail na URL
+    router.push(`/acesso?email=${encodeURIComponent(formData.email)}`);
   };
 
   const scrollToSection = (id: string) => {
@@ -112,97 +111,90 @@ export default function LandingPage() {
             <span className={`${styles.stepIndicator} ${step >= 3 ? styles.stepIndicatorActive : styles.stepIndicatorInactive}`}>3. Dados</span>
           </div>
 
-          {status === 'success' ? (
-            <div className={`text-center py-8 ${styles.animateUp}`}>
-              <div className="w-20 h-20 bg-[#F3EBFF] text-[#5B3196] rounded-full flex items-center justify-center text-3xl mx-auto mb-6">✓</div>
-              <h2 className="text-2xl font-bold text-[#2D1B4E] mb-3">Pedido Registrado!</h2>
-              <p className="text-slate-600 text-sm max-w-sm mx-auto">Em breve um especialista chamará você no WhatsApp para confirmar os dados e iniciar a formatação.</p>
-            </div>
-          ) : (
-            <form onSubmit={step === 3 ? handleSubmit : (e) => e.preventDefault()}>
-              {/* PASSO 1 */}
-              {step === 1 && (
-                <div className={`${styles.formGroup} ${styles.animateUp}`}>
-                  <div>
-                    <label className={styles.inputLabel}>Norma Desejada</label>
-                    <select className={styles.inputField} value={formData.norma} onChange={(e) => setFormData({...formData, norma: e.target.value})}>
-                      <option value="ABNT">ABNT</option>
-                      <option value="APA">APA</option>
-                      <option value="Vancouver">Vancouver</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className={styles.inputLabel}>Quantidade de Páginas (Estimada)</label>
-                    <input type="number" min="1" required className={styles.inputField} value={formData.paginas} onChange={(e) => setFormData({...formData, paginas: Number(e.target.value)})} />
-                  </div>
-                </div>
-              )}
-
-              {/* PASSO 2 */}
-              {step === 2 && (
-                <div className={`${styles.formGroup} ${styles.animateUp}`}>
-                  <label className={styles.inputLabel}>Prazo de Entrega (Preço base por pág.)</label>
-                  <div className={styles.radioGrid}>
-                    {[
-                      { label: '72 horas', preco: 2 },
-                      { label: '48 horas', preco: 3 },
-                      { label: '24 horas', preco: 4 },
-                      { label: '12 horas', preco: 6 },
-                    ].map((opcao) => (
-                      <label key={opcao.preco} className={styles.radioOption}>
-                        <input type="radio" name="prazo" className={styles.radioInput} value={opcao.preco} checked={formData.prazo == opcao.preco} onChange={(e) => setFormData({...formData, prazo: Number(e.target.value)})} />
-                        <span className="font-medium text-slate-700 text-sm">{opcao.label} <span className="text-[#D4AF37] font-bold block md:inline">(R$ {opcao.preco})</span></span>
-                      </label>
-                    ))}
-                  </div>
-                  <label className="block text-sm font-bold text-[#2D1B4E] mt-2 mb-1">Serviços Extras</label>
-                  <div className="flex flex-col gap-2">
-                    <label className={styles.radioOption}>
-                      <input type="checkbox" className={styles.radioInput} checked={formData.revisao} onChange={(e) => setFormData({...formData, revisao: e.target.checked})} />
-                      <span className="text-slate-700 text-sm">Revisão Ortográfica <span className="text-[#D4AF37] font-bold">(+ R$ 2/pág)</span></span>
-                    </label>
-                  </div>
-                </div>
-              )}
-
-              {/* PASSO 3 */}
-              {step === 3 && (
-                <div className={`${styles.formGroup} ${styles.animateUp}`}>
-                  <div>
-                    <label className={styles.inputLabel}>Nome Completo</label>
-                    <input type="text" required className={styles.inputField} placeholder="Ex: Mariana Silva" value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} />
-                  </div>
-                  <div>
-                    <label className={styles.inputLabel}>E-mail Acadêmico</label>
-                    <input type="email" required className={styles.inputField} placeholder="mariana@universidade.edu.br" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
-                  </div>
-                  <div>
-                    <label className={styles.inputLabel}>WhatsApp</label>
-                    <input type="tel" required className={styles.inputField} placeholder="(11) 98765-4321" value={formData.whatsapp} onChange={(e) => setFormData({...formData, whatsapp: e.target.value})} />
-                  </div>
-                </div>
-              )}
-
-              <div className={styles.wizardFooter}>
+          <form onSubmit={step === 3 ? handleSubmit : (e) => e.preventDefault()}>
+            {/* PASSO 1 */}
+            {step === 1 && (
+              <div className={`${styles.formGroup} ${styles.animateUp}`}>
                 <div>
-                  {step > 1 && <button type="button" onClick={prevStep} className={styles.btnSecondary}>Voltar</button>}
+                  <label className={styles.inputLabel}>Norma Desejada</label>
+                  <select className={styles.inputField} value={formData.norma} onChange={(e) => setFormData({...formData, norma: e.target.value})}>
+                    <option value="ABNT">ABNT</option>
+                    <option value="APA">APA</option>
+                    <option value="Vancouver">Vancouver</option>
+                  </select>
                 </div>
-                <div className="flex items-center gap-4 md:gap-6">
-                  <div className="text-right hidden sm:block">
-                    <span className="block text-[10px] text-[#5B3196] uppercase font-bold tracking-widest">Valor Estimado</span>
-                    <span className={styles.totalPrice}>R$ {total.toFixed(2).replace('.', ',')}</span>
-                  </div>
-                  {step < 3 ? (
-                    <button type="button" onClick={nextStep} className={styles.btnPrimary}>Avançar</button>
-                  ) : (
-                    <button type="submit" disabled={status === 'loading'} className={styles.btnPrimary}>
-                      {status === 'loading' ? 'Enviando...' : 'Finalizar'}
-                    </button>
-                  )}
+                <div>
+                  <label className={styles.inputLabel}>Quantidade de Páginas (Estimada)</label>
+                  <input type="number" min="1" required className={styles.inputField} value={formData.paginas} onChange={(e) => setFormData({...formData, paginas: Number(e.target.value)})} />
                 </div>
               </div>
-            </form>
-          )}
+            )}
+
+            {/* PASSO 2 */}
+            {step === 2 && (
+              <div className={`${styles.formGroup} ${styles.animateUp}`}>
+                <label className={styles.inputLabel}>Prazo de Entrega (Preço base por pág.)</label>
+                <div className={styles.radioGrid}>
+                  {[
+                    { label: '72 horas', preco: 2 },
+                    { label: '48 horas', preco: 3 },
+                    { label: '24 horas', preco: 4 },
+                    { label: '12 horas', preco: 6 },
+                  ].map((opcao) => (
+                    <label key={opcao.preco} className={styles.radioOption}>
+                      <input type="radio" name="prazo" className={styles.radioInput} value={opcao.preco} checked={formData.prazo == opcao.preco} onChange={(e) => setFormData({...formData, prazo: Number(e.target.value)})} />
+                      <span className="font-medium text-slate-700 text-sm">{opcao.label} <span className="text-[#D4AF37] font-bold block md:inline">(R$ {opcao.preco})</span></span>
+                    </label>
+                  ))}
+                </div>
+                <label className="block text-sm font-bold text-[#2D1B4E] mt-2 mb-1">Serviços Extras</label>
+                <div className="flex flex-col gap-2">
+                  <label className={styles.radioOption}>
+                    <input type="checkbox" className={styles.radioInput} checked={formData.revisao} onChange={(e) => setFormData({...formData, revisao: e.target.checked})} />
+                    <span className="text-slate-700 text-sm">Revisão Ortográfica <span className="text-[#D4AF37] font-bold">(+ R$ 2/pág)</span></span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* PASSO 3 */}
+            {step === 3 && (
+              <div className={`${styles.formGroup} ${styles.animateUp}`}>
+                <div>
+                  <label className={styles.inputLabel}>Nome Completo</label>
+                  <input type="text" required className={styles.inputField} placeholder="Ex: Mariana Silva" value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} />
+                </div>
+                <div>
+                  <label className={styles.inputLabel}>E-mail Acadêmico</label>
+                  <input type="email" required className={styles.inputField} placeholder="mariana@universidade.edu.br" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+                </div>
+                <div>
+                  <label className={styles.inputLabel}>WhatsApp</label>
+                  <input type="tel" required className={styles.inputField} placeholder="(11) 98765-4321" value={formData.whatsapp} onChange={(e) => setFormData({...formData, whatsapp: e.target.value})} />
+                </div>
+              </div>
+            )}
+
+            <div className={styles.wizardFooter}>
+              <div>
+                {step > 1 && <button type="button" onClick={prevStep} className={styles.btnSecondary}>Voltar</button>}
+              </div>
+              <div className="flex items-center gap-4 md:gap-6">
+                <div className="text-right hidden sm:block">
+                  <span className="block text-[10px] text-[#5B3196] uppercase font-bold tracking-widest">Valor Estimado</span>
+                  <span className={styles.totalPrice}>R$ {total.toFixed(2).replace('.', ',')}</span>
+                </div>
+                {step < 3 ? (
+                  <button type="button" onClick={nextStep} className={styles.btnPrimary}>Avançar</button>
+                ) : (
+                  // Botão final atualizado para refletir a nova camada de segurança
+                  <button type="submit" disabled={status === 'loading'} className={styles.btnPrimary}>
+                    Avançar
+                  </button>
+                )}
+              </div>
+            </div>
+          </form>
         </div>
       </section>
 
