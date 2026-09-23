@@ -27,3 +27,13 @@ model Lead {
   
   createdAt     DateTime @default(now())
 }
+
+model OtpVerification {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  otpHash   String   // Armazena apenas o hash, nunca o código puro
+  attempts  Int      @default(0) // Controle de limite de tentativas
+  expiresAt DateTime // Controle de expiração
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
