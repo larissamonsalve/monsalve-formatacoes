@@ -1,4 +1,3 @@
-// src/app/acesso/page.tsx
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -7,7 +6,6 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
 
-// Componente interno que contém a lógica e o formulário
 function AcessoContent() {
   const searchParams = useSearchParams();
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -15,8 +13,11 @@ function AcessoContent() {
   const [otp, setOtp] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  
+  // Estado para o cronômetro de reenvio
+  const [timer, setTimer] = useState(0);
 
-  // EFEITO MÁGICO: Lê a URL assim que a página abre e preenche o e-mail
+  // Efeito que preenche o e-mail vindo da URL
   useEffect(() => {
     const emailDaUrl = searchParams.get('email');
     if (emailDaUrl) {
@@ -24,8 +25,19 @@ function AcessoContent() {
     }
   }, [searchParams]);
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Efeito do cronômetro (1 segundo por vez)
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const handleSendOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setStatus('loading');
     setErrorMessage('');
 
@@ -40,6 +52,7 @@ function AcessoContent() {
       
       setStatus('idle');
       setStep(2); 
+      setTimer(60); // Inicia a contagem de 60 segundos
     } catch (error: any) {
       setStatus('error');
       setErrorMessage(error.message);
@@ -94,7 +107,7 @@ function AcessoContent() {
         {step === 1 && (
           <form onSubmit={handleSendOtp} className={styles.formFadeIn}>
             <div className={styles.headerText}>
-              <h1 className={styles.title}>Acesso Seguro</h1>
+              <h1 className={styles.title}>Validação de E-mail</h1>
               <p className={styles.subtitle}>Confirme ou introduza o seu e-mail para receber o código de validação.</p>
             </div>
 
@@ -122,8 +135,8 @@ function AcessoContent() {
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} className={styles.formFadeIn}>
             <div className={styles.headerText}>
-              <h1 className={styles.title}>Validar Código</h1>
-              <p className={styles.subtitle}>Enviámos um código de 6 dígitos para <br/><strong className="text-[#5B3196]">{email}</strong></p>
+              <h1 className={styles.title}>Validação de E-mail</h1>
+              <p className={styles.subtitle}>Enviámos um código de 6 dígitos para <br/><strong className={styles.textPurple}>{email}</strong></p>
             </div>
 
             <div>
@@ -142,12 +155,29 @@ function AcessoContent() {
             {status === 'error' && <p className={styles.errorText}>{errorMessage}</p>}
 
             <button type="submit" disabled={status === 'loading' || otp.length < 6} className={styles.btnSecondary}>
-              {status === 'loading' ? 'A verificar...' : 'Validar Acesso'}
+              {status === 'loading' ? 'Verificando...' : 'Validar'}
             </button>
             
-            <button type="button" onClick={() => setStep(1)} className={styles.btnText}>
-              Usar outro e-mail
-            </button>
+            {/* LÓGICA VISUAL DO CRONÓMETRO E REENVIO */}
+            <div className={styles.timerContainer}>
+              {timer > 0 ? (
+                <p className={styles.timerText}>
+                  Não recebeu? Aguarde <strong className={styles.textPurple}>{timer}s</strong>
+                </p>
+              ) : (
+                <button 
+                  type="button" 
+                  onClick={() => handleSendOtp()} 
+                  className={styles.resendButton}
+                >
+                  Reenviar código agora
+                </button>
+              )}
+              
+              <button type="button" onClick={() => setStep(1)} className={styles.btnText}>
+                Usar outro e-mail
+              </button>
+            </div>
           </form>
         )}
 
@@ -156,7 +186,7 @@ function AcessoContent() {
           <div className={styles.successContainer}>
             <div className={styles.successIcon}>✓</div>
             <h1 className={styles.title}>E-mail Validado!</h1>
-            <p className={styles.successText}>A sua identidade foi confirmada com sucesso. O seu e-mail está seguro.</p>
+            <p className={styles.successText}>A sua identidade foi confirmada com sucesso. O seu e-mail é válido.</p>
             <Link href="/" className={styles.btnOutline}>
               Voltar ao Início
             </Link>
@@ -165,7 +195,7 @@ function AcessoContent() {
       </div>
       
       <p className={styles.footerText}>
-        © 2026 Monsalve Formatações. Acesso seguro.
+        © 2026 Monsalve Formatações. Validação de e-mail.
       </p>
     </div>
   );
@@ -175,8 +205,8 @@ function AcessoContent() {
 export default function AcessoCliente() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#FCFAFF] flex items-center justify-center text-[#5B3196] font-bold">
-        A carregar ambiente seguro...
+      <div className={styles.loadingScreen}>
+        Carregando...
       </div>
     }>
       <AcessoContent />
