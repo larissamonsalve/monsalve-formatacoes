@@ -1,22 +1,18 @@
 // src/app/layout.tsx
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata, Viewport } from 'next';
+import './globals.css';
+import RegisterSW from '@/components/RegisterSW';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-// Metadados que aparecem na aba do navegador e no Google
 export const metadata: Metadata = {
-  title: "Formatação ABNT | Consultoria Acadêmica",
-  description: "Serviço profissional de formatação de TCC, Monografias e Artigos nas normas ABNT.",
+  title: 'Monsalve Formatações | Consultoria & Revisão Acadêmica',
+  description: 'Formatamos seu TCC, artigo ou dissertação seguindo estritamente as normas ABNT, APA e Vancouver.',
+  manifest: '/manifest.webmanifest',
+};
+
+export const viewport: Viewport = {
+  themeColor: '#5B3196',
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -25,11 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="pt-BR" 
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="pt-BR">
+      <body>
+        <RegisterSW />
+        {children}
+      </body>
     </html>
   );
 }
